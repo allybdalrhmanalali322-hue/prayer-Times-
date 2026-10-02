@@ -68,7 +68,7 @@ height: 55vh;
         }
           async function fail(){
             console.log('نحناج الموقع فقط من اجل  اعطاء اوقات الصلاة بشكل صحيح');
-            const ipResponse = await fetch('ipapi.co')
+            const ipResponse = await fetch('https://ipapi.co/json/')
         const ipData = await ipResponse.json();
        
          gettime(ipData.latitude,ipData.longitude,3)
