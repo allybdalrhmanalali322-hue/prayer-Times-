@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.clouds.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Sora:wght@600&display=swap" rel="stylesheet">
+    <title>Document</title>
+    <style>
+        body{
+            margin: 0;
+        }
+  #background{
+width: 100vw;
+height: 100vh;
+display: flex;
+justify-content:center;
+align-items: center;
+ }
+ .card{
+width: 43vw;
+height: 82vh;
+box-sizing: border-box;
+background-color: rgba(255, 255, 255, 0.267);
+box-shadow:  0 0 32px 3px rgba(0, 0, 0, 0.199);
+border: 1px solid rgba(0, 0, 0, 0.11);
+backdrop-filter: blur(10px);
+border-radius: 10vw;
+display: flex;
+flex-direction: column;
+word-spacing: 2vw;
+align-items: center;
+justify-content: space-evenly;
+ font-family: Inter , sans-serif;
+    color: #2C3E50;
+ padding: 5vw;
+ 
+ }
+ .card div{
+    font-size: clamp(1.3rem , 1.1vw, 2.3rem);
+ }
+ @media (max-width: 768px) {
+    .card{
+width: 80vw;
+height: 50vh;
+    }
+
+ }
+    </style>
+</head>
+<body onload="createcloud()">
+    <div id="background">
+        <div class="card"></div>
+    </div>
+    <script>
+       if(navigator.geolocation)
+       {
+          navigator.geolocation.getCurrentPosition(getlatitudeLongitude,fail)
+       }else{
+        console.log(' المتصفح لا يدعم   تحديد الموقع ');
+        fail();
+       }
+        function getlatitudeLongitude(position){
+            gettime(position.coords.latitude,position.coords.longitude,3)
+        }
+          async function fail(){
+            console.log('نحناج الموقع فقط من اجل  اعطاء اوقات الصلاة بشكل صحيح');
+            const ipResponse = await fetch('ipapi.co')
+        const ipData = await ipResponse.json();
+       
+         gettime(ipData.latitude,ipData.longitude,3)
+        }
+        async function gettime(latitude,longitude,method){
+            let response= await  fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=${method}`);
+            let Data= await response.json();
+            console.log(Data);
+                let array=Object.keys(Data.data.timings);
+                  let  heading=document.createElement('h1');
+                  heading.innerText='Prayer Times'
+                document.querySelector('.card').appendChild(heading);
+                for(let i=0;i<array.length;i++)
+                {
+                    let  prayer=document.createElement('div');
+                    prayer.innerText=`${array[i]}  :  ${Data.data.timings[array[i]]}`;
+                    document.querySelector('.card').appendChild(prayer);
+                }
+
+        }
+function createcloud(){
+const time=new Date();
+console.log(time.getHours())
+    if((time.getHours()<17)&&(time.getHours()>=4)){
+vantaEffect = VANTA.CLOUDS({
+  el: "#background",
+  mouseControls:false,
+  touchControls: false,
+  gyroControls: false,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  skyColor: 0x68b0d8,    
+  cloudColor: 0xadc1d6,   
+  cloudShadowColor: 0x183550, 
+  sunColor: 0xff9900,    
+  sunGlowColor: 0xffe100, 
+  sunlightColor: 0xff9900 
+});
+    }else{
+        document.querySelector('.card').style.color='black';
+        vantaEffect = VANTA.CLOUDS({
+  el: "#background",
+  mouseControls: false,
+  touchControls: false,
+  gyroControls: false,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  skyColor: 0x0b192c,     
+  cloudColor: 0x1e293b,   
+  cloudShadowColor: 0x020617, 
+  sunColor: 0xe2e8f0,     
+  sunGlowColor: 0x38bdf8, 
+  sunlightColor: 0x94a3b8 
+});
+    }
+   
+
+}
+
+    </script>
+</body>
+</html>
